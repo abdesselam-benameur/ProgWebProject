@@ -130,3 +130,6 @@ dmypy.json
 
 # Vscode cache
 .vscode/
+
+# Others
+.DS_Store
