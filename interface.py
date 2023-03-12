@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
+from functions import *
 
 # interface pour charger, visualiser, traiter et analyser les données 
 # et entrainer des modeles de machine learning avec ces données
@@ -9,7 +10,7 @@ import matplotlib.pyplot as plt
 file_uploader = st.file_uploader("Charger le dataset", type="csv")
 if file_uploader is not None:
     # demander le séparateur si ce n'est pas ','
-    seperator = st.text_input("Séparateur", value=";")
+    seperator = st.text_input("Séparateur", value=",")
     if seperator != "":
         # afficher le dataset
         st.write("afficher le dataset")
@@ -24,23 +25,34 @@ if file_uploader is not None:
         # todo: le type des colonnes
         
         # afficher les statistiques du dataset
-        st.write("todo: afficher les statistiques du dataset")
-        st.write(df.describe())
+        # st.write("todo: afficher les statistiques du dataset")
+        # st.write(df.describe())
 
         # afficher la matrice de corrélation
-        st.write("afficher la matrice de corrélation")
-        st.write(df.corr())
+        # st.write("afficher la matrice de corrélation")
+        # st.write(df.corr())
 
         # afficher un graphe de la matrice de corrélation
-        st.write("afficher un graphe de la matrice de corrélation")
-        colormap = sns.color_palette("Greens")
-        graph = sns.heatmap(df.corr(), annot=True, cmap=colormap)
-        st.pyplot(graph.figure)
+        # st.write("afficher un graphe de la matrice de corrélation")
+        # colormap = sns.color_palette("Greens")
+        # graph = sns.heatmap(df.corr(), annot=True, cmap=colormap)
+        # st.pyplot(graph.figure)
 
         if target != "":
             # afficher la colonne target
-            st.write("afficher la colonne target")
-            st.write(df[target])
+            # st.write("afficher la colonne target")
+            # st.write(df[target])
+
+            # traitement des valeurs manquantes
+            # st.write("Traitement des valeurs manquantes")
+
+
+            # delete the lines where the value of the target column is missing
+            # test if there are missing values
+            if df[target].isnull().sum() != 0:
+                st.write("il y a des valeurs manquantes dans la colonne target")
+                st.write("supprimer les lignes où la valeur de la colonne target est manquante")
+                df = df.dropna(subset=[target])
 
             # afficher la distribution des classes
             st.write("afficher la distribution des classes")
