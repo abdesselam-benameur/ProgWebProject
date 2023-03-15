@@ -8,6 +8,7 @@ import numpy as np
 def get_class_distribuation(column):
     return column.value_counts()
 
+# todo: implement some methods to deal with class distribution problem
 def get_class_distribuation_percentages(column):
     return column.value_counts()/len(column)
 
@@ -21,15 +22,19 @@ def get_dummies(column):
 # determine a type of a column
 def variable_type(column):
     if column.dtype == 'int64' or column.dtype == 'float64':
-        return 'quantitavive'
-    elif column.dtype == 'object':
-        return 'qualitative'
+        return 'quantitative'
     else:
-        return None
+        return 'catégorielle'
+
+def variable_type_colored(column):
+    if variable_type(column) == "quantitative":
+        return ":green[quantitative]"
+    else:
+        return ":orange[catégorielle]"
 
 # determine of categories in categorical columns
 def categories(column):
-    if variable_type(column) == 'qualitative':
+    if variable_type(column) == 'catégorielle':
         return column.unique()
     else:
         return None
@@ -134,9 +139,6 @@ def normalize_column_by_standardization(column : pd.Series):
         Cette méthode est utile lorsque les données ont une distribution normale ou presque normale.
     
     """
-
-    
-
     # Exemple de données à normaliser
     # data = np.array([[10, 2], [5, 3], [8, 7]])
 

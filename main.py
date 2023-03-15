@@ -4,7 +4,6 @@ import pandas as pd
 filepath = "data/dermatology.data"
 
 df = pd.read_csv(filepath, header=None)
-df.head()
 # set the list of columns of df
 df.columns = ["erythema", "scaling", "definite_borders", "itching", "koebner_phenomenon",
               "polygonal_papules", "follicular_papules", "oral_mucosal_involvement",
@@ -17,3 +16,5 @@ df.columns = ["erythema", "scaling", "definite_borders", "itching", "koebner_phe
               "spongiosis", "saw-tooth_appearance_of_retes", "follicular_horn_plug", "perifollicular_parakeratosis",
               "inflammatory_monoluclear_inflitrate", "band-like_infiltrate", "Age", "class"]
 
+# save
+df.to_csv("data/dermatology.csv", index=False)
