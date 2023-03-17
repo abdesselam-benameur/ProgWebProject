@@ -3,17 +3,23 @@ import seaborn as sns
 from scipy import stats
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import numpy as np
+from imblearn.under_sampling import RandomUnderSampler
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import ADASYN
 
 # class distribution
 def get_class_distribuation(column):
     return column.value_counts()
 
-# todo: implement some methods to deal with class distribution problem
 def get_class_distribuation_percentages(column):
     return column.value_counts()/len(column)
 
 # def get_class_distribuation_piechart(column):
 #     return column.value_counts().plot(kind="pie", title="Distribution des classes")
+
+# todo: implement some methods to deal with class distribution problem
+# check this https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/
 
 # dummmification
 def get_dummies(column):
@@ -39,6 +45,38 @@ def categories(column):
     else:
         return None
 
+def random_undersampling(X_train, y_train):
+    rus = RandomUnderSampler()
+    X_train_rus, y_train_rus = rus.fit_resample(X_train, y_train)
+    return X_train_rus, y_train_rus
+
+def random_oversampling(X_train, y_train):
+    ros = RandomOverSampler()
+    X_train_ros, y_train_ros = ros.fit_resample(X_train, y_train)
+    return X_train_ros, y_train_ros
+
+def apply_smote(X_train, y_train):
+    smote = SMOTE()
+    X_train_smote, y_train_smote = smote.fit_resample(X_train, y_train)
+    return X_train_smote, y_train_smote
+
+def apply_adasyn(X_train, y_train):
+    adasyn = ADASYN()
+    X_train_adasyn, y_train_adasyn = adasyn.fit_resample(X_train, y_train)
+    return X_train_adasyn, y_train_adasyn
+
+def apply_imbalanced_data_method(X_train, y_train, method):
+    if method == "Random Undersampling":
+        return random_undersampling(X_train, y_train)
+    elif method == "Random Oversampling":
+        return random_oversampling(X_train, y_train)
+    elif method == "SMOTE":
+        return apply_smote(X_train, y_train)
+    elif method == "ADASYN":
+        return apply_adasyn(X_train, y_train)
+    else:
+        return X_train, y_train
+        
 # find outliers in a column of a dataframe
 def get_outliers(col):
     q1 = col.quantile(0.25)
@@ -53,7 +91,7 @@ def get_outliers(col):
     return nb_lines_outliers,outliers
 
 def display_boxplot(col):
-    return sns.boxplot(data=col).set(xlabel=col.name)
+    return sns.boxplot(x=col)
 
 def handle_outliers(col,handle_type):
     if variable_type(col) == 'quantitavive':
@@ -66,6 +104,7 @@ def handle_outliers(col,handle_type):
                 new_value=col.mean()
                 col.replace(outliers,new_value,inplace=True)
 
+# missing values
 def get_missing_values_column(column, list_missing_values):
     """Return the missing values of a column"""
     return column[column.isin(list_missing_values)]
@@ -101,11 +140,13 @@ def replace_missing_values_column_by_value(column : pd.Series, list_missing_valu
     column.replace(list_missing_values, value, inplace=True)
 
 #TODO: faire une fonction qui remplace les valeurs manquantes par prediction
+# check this for example https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html
 
 def replace_missing_values_column_by_prediction(column : pd.Series, list_missing_values, model):
     """Replace the missing values of a column by the prediction of the model"""
     pass
 
+# normalization
 def normalize_column_by_min_max(column: pd.Series):
     """Normalize a column by the min max method
         La normalisation Min-Max : cette méthode consiste à transformer les données 
@@ -114,9 +155,6 @@ def normalize_column_by_min_max(column: pd.Series):
         Où X est la valeur originale, X_min et X_max sont respectivement les valeurs minimale et maximale 
         de l'ensemble de données. Cette méthode est utile lorsque les données ont une plage de valeurs connue et délimitée.
     """
-
-    
-
     # Exemple de données à normaliser
     # data = np.array([[10, 2], [5, 3], [8, 7]])
 
@@ -137,7 +175,6 @@ def normalize_column_by_standardization(column : pd.Series):
 
         Où X est la valeur originale, la moyenne et l'écart-type sont calculés à partir de l'ensemble de données. 
         Cette méthode est utile lorsque les données ont une distribution normale ou presque normale.
-    
     """
     # Exemple de données à normaliser
     # data = np.array([[10, 2], [5, 3], [8, 7]])
