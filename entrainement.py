@@ -1,11 +1,14 @@
-!pip install scikit-plot
 from sklearn.metrics import recall_score,precision_score,accuracy_score, confusion_matrix, classification_report
 from sklearn.model_selection import RepeatedStratifiedKFold, KFold
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.linear_model import LogisticRegression
+from sklearn.multiclass import OneVsOneClassifier
+from sklearn.multiclass import OneVsRestClassifier
 import scikitplot as skplt
+import pandas as pd
+
 from sklearn.metrics import roc_curve
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
@@ -117,7 +120,7 @@ def comparing_results(X_test,y_test,y_pred):
 def confusion_matrix(y_test,y_pred):
   skplt.metrics.plot_confusion_matrix(y_test,y_pred)
 
-def rocCurve(X_test,y_test):
+def rocCurve(X_test,y_test,fitted_data):
   #recall = TPR et specificity = FPR
   fpr, tpr, thresholds = roc_curve(y_test, fitted_data.predict_proba(X_test)[:,1])
   print("recall",tpr)
@@ -139,7 +142,7 @@ def rocCurve(X_test,y_test):
 # evaluation 
 
 # y a que l'accuracy qui est definie comme metrique pour le binaire et le mutliclasses
-def evaluation(y_test,y_pred):
+def evaluation(y_test,y_pred,X_test):
   accuracy=accuracy_score(y_test, y_pred)
   report_f1_recall_precision=classification_report(y_test, y_pred)
   if len(set(y_pred))<=2:
