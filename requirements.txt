@@ -3,5 +3,6 @@ pandas
 matplotlib
 scikit-learn
 imbalanced-learn
+scikit-plot
 scipy
 seaborn
