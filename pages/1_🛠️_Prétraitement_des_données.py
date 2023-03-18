@@ -19,7 +19,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 # interface pour charger, visualiser, traiter et analyser les données 
 # et entrainer des modeles de machine learning avec ces données
 
-st.title("Exploration de données et apprentissage de modèles supervisés")
+st.title("Prétraitement des données")
 st.markdown("# Charger les données")
 st.sidebar.markdown("# [Charger les données](#charger-les-donn-es)", unsafe_allow_html=True)
 file_uploader = st.file_uploader("Charger un fichier CSV avec un header valide", type="csv")
@@ -33,6 +33,7 @@ if file_uploader is not None:
         # afficher le dataset
         st.write("Afficher le dataset")
         df = pd.read_csv(file_uploader, sep=seperator)
+        df_copy = df.copy()
         st.write(df)
         st.write(f"Le dataset contient `{df.shape[0]}` lignes et `{df.shape[1]}` colonnes")
 
@@ -84,15 +85,15 @@ if file_uploader is not None:
                     missing_values = missing_values.splitlines()
                     # replace the missing values with np.nan
                     df.replace(missing_values, np.nan, inplace=True)
-                variable_categ = []
-                variable_quant = []
+                st.session_state.variable_categ = []
+                st.session_state.variable_quant = []
                 for col, colType in st.session_state.df_types.iterrows():
                     if colType[0] == ":green[quantitative]":
                         df[col] = pd.to_numeric(df[col], errors='coerce')
-                        variable_quant.append(col)
+                        st.session_state.variable_quant.append(col)
                     else:
                         df[col] = df[col].astype("object") # think about "category"
-                        variable_categ.append(col)
+                        st.session_state.variable_categ.append(col)
                         
                 st.write(df)
 
@@ -143,7 +144,7 @@ if file_uploader is not None:
                         options_categ = ["Supprimer la colonne", "Remplacer par la catégorie la plus fréquente (le mode)"]
                         with st.form(key='col_form'):
                             for col in cols_with_nan_values:
-                                if col in variable_quant:
+                                if col in st.session_state.variable_quant:
                                     method = st.selectbox(col, options_quant, key=col+"selectbox", index=1, disabled=st.session_state.form_disabled)
                                 else:
                                     method = st.selectbox(col, options_categ, key=col+"selectbox", index=1, disabled=st.session_state.form_disabled)
@@ -175,8 +176,9 @@ if file_uploader is not None:
                         suite = True
                         
                         st.write(f"Le nouveau dataset contient `{df.shape[0]}` lignes et `{df.shape[1]}` colonnes")
-                        # df.reset_index()
+                        df.reset_index(inplace=True, drop=True)
                         st.write(df)
+
 
                 ################################################################################################################
                 if suite:
@@ -185,8 +187,8 @@ if file_uploader is not None:
                     st.sidebar.markdown("## [Les valeurs aberrantes](#les-valeurs-aberrantes)", unsafe_allow_html=True)
 
                     # create tabs and display a boxplot per col within each tab
-                    tabs = st.tabs(variable_quant)
-                    for tab, col in zip(tabs, variable_quant):
+                    tabs = st.tabs(st.session_state.variable_quant)
+                    for tab, col in zip(tabs, st.session_state.variable_quant):
                         with tab:
                             nb_lines_outliers, outliers = get_outliers(df[col])
                             st.write("La liste des valeurs aberrantes trouvées:", str(list(outliers)))
@@ -216,57 +218,63 @@ if file_uploader is not None:
                                 scaler = MinMaxScaler()
                             elif method == "StandardScaler":
                                 scaler = StandardScaler()
-                            df[variable_quant] = pd.DataFrame(scaler.fit_transform(df[variable_quant]), columns=variable_quant)
-                            st.write(df)
+                            df[st.session_state.variable_quant] = pd.DataFrame(scaler.fit_transform(df[st.session_state.variable_quant]), columns=st.session_state.variable_quant)
+                        st.write(df)
                 
                         ################################################################################################################
                         # Les variables catégorielles
-                        if variable_categ:
+                        if st.session_state.variable_categ:
                             st.markdown("## Les variables catégorielles")
                             # display the number of categories in a table
-                            st.dataframe(pd.DataFrame({"Nombre de catégories": df[variable_categ].nunique()}).T, use_container_width=True)
+                            st.dataframe(pd.DataFrame({"Nombre de catégories": df[st.session_state.variable_categ].nunique()}).T, use_container_width=True)
                             # treat the categorical variables
                             if "categ_disabled" not in st.session_state:
                                 st.session_state.categ_disabled = False
                             options = ["Label Encoding", "One Hot Encoding"]
                             method = st.selectbox("Choisir la méthode de traitement des variables catégorielles", options, index=0, disabled=st.session_state.categ_disabled)
                             _, _, col3 = st.columns(3, gap="large")
-                            if col3.button(label='Valider', key="variable_categ_button", use_container_width=True):
+                            if col3.button(label='Valider', key="st.session_state.variable_categ_button", use_container_width=True):
                                 st.session_state.categ_disabled = True
                                 st.experimental_rerun()
                             if st.session_state.categ_disabled:
                                 if method == "Label Encoding":
-                                    df[variable_categ] = df[variable_categ].apply(LabelEncoder().fit_transform)
+                                    df[st.session_state.variable_categ] = df[st.session_state.variable_categ].apply(LabelEncoder().fit_transform)
                                 else:
-                                    df = pd.get_dummies(df, columns=variable_categ, prefix=variable_categ)
+                                    df = pd.get_dummies(df, columns=st.session_state.variable_categ, drop_first=True, prefix=st.session_state.variable_categ)
                                 st.write(df)
 
                         ################################################################################################################
                             
-                        # Le déséquilibre des classes
-                        st.markdown("## Distribution des classes")
-                        st.sidebar.markdown("## [Distribution des classes](#distribution-des-classes)", unsafe_allow_html=True)
-                        # display the number of classes in a table
-                        st.write(f"Nombre de classes de la colonne target `{target}`: ", Y.nunique())
-                        # display the distribution of the classes
-                        st.write("Distribution des classes")
-                        st.bar_chart(Y.value_counts())
-                        # treat the target variable
-                        if "target_disabled" not in st.session_state:
-                            st.session_state.target_disabled = False
-                        options = ["Oui", "Non"]
-                        choice = st.radio("Voulez vous traiter le déséquilibre des classes?", options, key="radio_target", index=0, horizontal=True, disabled=st.session_state.target_disabled)
-                        # choisir la méthode de traitement
-                        options = ["RandomOverSampler", "RandomUnderSampler", "SMOTE", "ADASYN"]
-                        method = st.selectbox("Choisir la méthode de traitement", options, index=0, disabled=st.session_state.radio_target=="Non" or st.session_state.target_disabled)
-                        _, _, col3 = st.columns(3, gap="large")
-                        if col3.button(label='Valider', key="target_button", use_container_width=True):
-                            st.session_state.target_disabled = True
-                            st.experimental_rerun() 
-                        if st.session_state.target_disabled:
-                            if choice == "Oui":
-                                df, Y = apply_imbalanced_data_method(df, Y, method)
-                                st.write("Nouvelle distribution des classes")
+                                # Le déséquilibre des classes
+                                st.markdown("## Distribution des classes")
+                                st.sidebar.markdown("## [Distribution des classes](#distribution-des-classes)", unsafe_allow_html=True)
+                                # display the number of classes in a table
+                                st.write(f"Nombre de classes de la colonne target `{target}`: ", Y.nunique())
+                                # display the distribution of the classes
+                                st.write("Distribution des classes")
                                 st.bar_chart(Y.value_counts())
+                                # treat the target variable
+                                if "target_disabled" not in st.session_state:
+                                    st.session_state.target_disabled = False
+                                options = ["Oui", "Non"]
+                                choice = st.radio("Voulez vous traiter le déséquilibre des classes?", options, key="radio_target", index=0, horizontal=True, disabled=st.session_state.target_disabled)
+                                # choisir la méthode de traitement
+                                options = ["Random Oversampling", "Random Undersampling", "SMOTE", "ADASYN"]
+                                method = st.selectbox("Choisir la méthode de traitement", options, index=0, disabled=st.session_state.radio_target=="Non" or st.session_state.target_disabled)
+                                _, _, col3 = st.columns(3, gap="large")
+                                if col3.button(label='Valider', key="target_button", use_container_width=True):
+                                    st.session_state.target_disabled = True
+                                    st.experimental_rerun() 
+                                if st.session_state.target_disabled:
+                                    if choice == "Oui":
+                                        df, Y = apply_imbalanced_data_method(df, Y, method)
+                                        st.write("Nouvelle distribution des classes")
+                                        st.bar_chart(Y.value_counts())
+                                    st.session_state.df = df
+                                    st.session_state.Y = Y
+
+                        ################################################################################################################
                         
+                        
+
                         # todo: feature selection 
