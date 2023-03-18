@@ -223,6 +223,7 @@ if file_uploader is not None:
                 
                         ################################################################################################################
                         # Les variables catégorielles
+                        suite = False
                         if st.session_state.variable_categ:
                             st.markdown("## Les variables catégorielles")
                             # display the number of categories in a table
@@ -238,40 +239,46 @@ if file_uploader is not None:
                                 st.experimental_rerun()
                             if st.session_state.categ_disabled:
                                 if method == "Label Encoding":
-                                    df[st.session_state.variable_categ] = df[st.session_state.variable_categ].apply(LabelEncoder().fit_transform)
+                                    dff = df[st.session_state.variable_categ].apply(LabelEncoder().fit_transform)
+                                    dff.columns = dff.columns.map(lambda x: x + '_encoded')
+                                    df = pd.concat([df, dff], axis=1)
                                 else:
-                                    df = pd.get_dummies(df, columns=st.session_state.variable_categ, drop_first=True, prefix=st.session_state.variable_categ)
+                                    dff = df[st.session_state.variable_categ]
+                                    df = pd.concat([dff, pd.get_dummies(df, columns=st.session_state.variable_categ, drop_first=True, prefix=st.session_state.variable_categ)], axis=1)
                                 st.write(df)
+                                suite = True
+                        else:
+                            suite = True
 
                         ################################################################################################################
-                            
-                                # Le déséquilibre des classes
-                                st.markdown("## Distribution des classes")
-                                st.sidebar.markdown("## [Distribution des classes](#distribution-des-classes)", unsafe_allow_html=True)
-                                # display the number of classes in a table
-                                st.write(f"Nombre de classes de la colonne target `{target}`: ", Y.nunique())
-                                # display the distribution of the classes
-                                st.write("Distribution des classes")
-                                st.bar_chart(Y.value_counts())
-                                # treat the target variable
-                                if "target_disabled" not in st.session_state:
-                                    st.session_state.target_disabled = False
-                                options = ["Oui", "Non"]
-                                choice = st.radio("Voulez vous traiter le déséquilibre des classes?", options, key="radio_target", index=0, horizontal=True, disabled=st.session_state.target_disabled)
-                                # choisir la méthode de traitement
-                                options = ["Random Oversampling", "Random Undersampling", "SMOTE", "ADASYN"]
-                                method = st.selectbox("Choisir la méthode de traitement", options, index=0, disabled=st.session_state.radio_target=="Non" or st.session_state.target_disabled)
-                                _, _, col3 = st.columns(3, gap="large")
-                                if col3.button(label='Valider', key="target_button", use_container_width=True):
-                                    st.session_state.target_disabled = True
-                                    st.experimental_rerun() 
-                                if st.session_state.target_disabled:
-                                    if choice == "Oui":
-                                        df, Y = apply_imbalanced_data_method(df, Y, method)
-                                        st.write("Nouvelle distribution des classes")
-                                        st.bar_chart(Y.value_counts())
-                                    st.session_state.df = df
-                                    st.session_state.Y = Y
+                        if suite: 
+                            # Le déséquilibre des classes
+                            st.markdown("## Distribution des classes")
+                            st.sidebar.markdown("## [Distribution des classes](#distribution-des-classes)", unsafe_allow_html=True)
+                            # display the number of classes in a table
+                            st.write(f"Nombre de classes de la colonne target `{target}`: ", Y.nunique())
+                            # display the distribution of the classes
+                            st.write("Distribution des classes")
+                            st.bar_chart(Y.value_counts())
+                            # treat the target variable
+                            if "target_disabled" not in st.session_state:
+                                st.session_state.target_disabled = False
+                            options = ["Oui", "Non"]
+                            choice = st.radio("Voulez vous traiter le déséquilibre des classes?", options, key="radio_target", index=0, horizontal=True, disabled=st.session_state.target_disabled)
+                            # choisir la méthode de traitement
+                            options = ["Random Oversampling", "Random Undersampling", "SMOTE", "ADASYN"]
+                            method = st.selectbox("Choisir la méthode de traitement", options, index=0, disabled=st.session_state.radio_target=="Non" or st.session_state.target_disabled)
+                            _, _, col3 = st.columns(3, gap="large")
+                            if col3.button(label='Valider', key="target_button", use_container_width=True):
+                                st.session_state.target_disabled = True
+                                st.experimental_rerun()
+                            if st.session_state.target_disabled:
+                                if choice == "Oui":
+                                    df, Y = apply_imbalanced_data_method(df, Y, method)
+                                    st.write("Nouvelle distribution des classes")
+                                    st.bar_chart(Y.value_counts())
+                                st.session_state.df = df
+                                st.session_state.Y = Y
 
                         ################################################################################################################
                         

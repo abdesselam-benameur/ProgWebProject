@@ -8,6 +8,8 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 if "df" not in st.session_state and "Y" not in st.session_state:
     st.warning("Commencez d'abord par charger les données et faire l'analyse exploratoire", icon="⚠️")
 else:
+    df = st.session_state.df.drop(columns=st.session_state.variable_categ)
+
     st.markdown("## Faites vos choix...")
     if "algo_choice" not in st.session_state:
         st.session_state.algo_choice = False
@@ -35,7 +37,7 @@ else:
     if st.session_state.algo_choice:            
         # create a button to train the model
         with st.spinner('Entraînement en cours...'):
-            X_train,X_test,y_train,y_test = load_dataset(st.session_state.df, st.session_state.Y, test_size/100)
+            X_train,X_test,y_train,y_test = load_dataset(df, st.session_state.Y, test_size/100)
             model = train_and_fine_tune(X_train, y_train, hyper_params_method, selected_algorithm)
         st.write("")
         st.success("L'entraînement est terminé avec succès", icon="✅")

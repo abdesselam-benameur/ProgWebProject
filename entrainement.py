@@ -40,7 +40,7 @@ def model_with_params(algorithm):
         "criterion":['gini','entropy',"log_loss"],
         "max_depth":list(range(1,16))
       }
-      return DecisionTreeClassifier()
+      return DecisionTreeClassifier(), params
 
 def train_and_fine_tune(X_train, y_train, finetuning_method, selected_algorithm):
   model, params = model_with_params(selected_algorithm)
