@@ -166,7 +166,7 @@ if file_uploader is not None:
                             for col, method in st.session_state.chosen_methods.items():
                                 if method.startswith("S"): # Supprimer la colonne
                                     df.drop(col, axis=1, inplace=True)
-
+                                    st.session_state.variable_quant.remove(col)
                                 elif method.endswith("moyenne"): # Remplacer par la moyenne
                                     df[col].fillna(df[col].mean(), inplace=True)
                                 elif method.endswith("médiane"): # Remplacer par la médiane

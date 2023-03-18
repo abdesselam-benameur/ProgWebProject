@@ -47,7 +47,7 @@ else:
         y_pred = model.predict(X_test)
 
         accuracy,f1,recall,precision,auc = evaluate(model,X_test, y_test)
-        st.table(pd.DataFrame({"Accuracy": [accuracy], "Rappel": [recall], "Précision": [precision], "AUC": [auc], "F1 Score": [f1],}, index=["Valeur"]))
+        st.table(pd.DataFrame({"Accuracy": [accuracy], "Recall": [recall], "Precision": [precision], "AUC": [auc], "F1 Score": [f1],}, index=["Valeur"]))
         
         st.markdown("### Matrice de confusion")
         st.pyplot(confusion_matrix2(y_test, y_pred))
