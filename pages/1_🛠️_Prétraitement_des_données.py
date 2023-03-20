@@ -251,7 +251,7 @@ if file_uploader is not None:
                             suite = True
 
                         ################################################################################################################
-                        if suite: 
+                        if suite:
                             # Le déséquilibre des classes
                             st.markdown("## Distribution des classes")
                             st.sidebar.markdown("## [Distribution des classes](#distribution-des-classes)", unsafe_allow_html=True)
@@ -278,7 +278,7 @@ if file_uploader is not None:
                                     st.write("Nouvelle distribution des classes")
                                     st.bar_chart(Y.value_counts())
                                 st.session_state.df = df
-                                st.session_state.Y = Y
+                                st.session_state.Y = Y if variable_type(Y) == "quantitative" else pd.Series(LabelEncoder().fit_transform(Y))
 
                         ################################################################################################################
                         
