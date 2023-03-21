@@ -115,7 +115,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
 
 
-        st.markdown("<center><h3>Graphique en bâtons</center>",
+        st.markdown("<center><h3>Diagramme en bâtons</center>",
                     unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
@@ -125,16 +125,16 @@ else:
             column12 = st.selectbox("Choisir une variable categorielle",
                                     categorial_variables, key="diag2")
         fig, contingency_table = graphic_representation(df[column11], df[column12])
+        st.table(contingency_table)
         st.pyplot(fig)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("<center><h3>Tableau contingence</center>",
-                    unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
-        with col1:
-            column21 = st.selectbox("Choisir une variable quantitative",
-                                    categorial_variables, key="cont1")
-        with col2:
-            column22 = st.selectbox("Choisir une variable categorielle",
-                                    categorial_variables, key="cont2")
-        st.table(contingency_table)
+        # st.markdown("<center><h3>Tableau contingence</center>",
+        #             unsafe_allow_html=True)
+        # col1, col2 = st.columns(2)
+        # with col1:
+        #     column21 = st.selectbox("Choisir une variable categorielle",
+        #                             categorial_variables, key="cont1")
+        # with col2:
+        #     column22 = st.selectbox("Choisir une variable categorielle",
+        #                             categorial_variables, key="cont2")

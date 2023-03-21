@@ -60,10 +60,10 @@ def histogramme(numeric_column):
   params : numeric variable of a dataframe
     """
     fig, ax = plt.subplots()
-    sns.distplot(numeric_column, ax=ax)
+    sns.histplot(numeric_column, ax=ax)
     # ax.hist(numeric_column)
     name = numeric_column.name
-    plt.title(f'Distribution de la variable {name}')
+    plt.title(f'Histogramme de la variable {name}')
     plt.xlabel(str(name))
     plt.ylabel('Fréquence')
     st.pyplot(fig)
