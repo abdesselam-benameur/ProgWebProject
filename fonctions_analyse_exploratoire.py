@@ -60,7 +60,7 @@ def histogramme(numeric_column):
   params : numeric variable of a dataframe
     """
     fig, ax = plt.subplots()
-    sns.distplot(numeric_column, ax=ax)
+    sns.histplot(numeric_column, ax=ax)
     # ax.hist(numeric_column)
     name = numeric_column.name
     plt.title(f'Distribution de la variable {name}')
