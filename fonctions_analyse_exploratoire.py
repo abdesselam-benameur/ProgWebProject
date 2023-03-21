@@ -65,7 +65,7 @@ def histogramme(numeric_column):
     name = numeric_column.name
     plt.title(f'Histogramme de la variable {name}')
     plt.xlabel(str(name))
-    plt.ylabel('Fréquence')
+    # plt.ylabel('Fréquence')
     st.pyplot(fig)
 
 # analyse unidimensionnelle qualitative:
