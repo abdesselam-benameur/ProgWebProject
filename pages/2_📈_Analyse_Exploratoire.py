@@ -9,7 +9,9 @@ st.title("Analyse exploratoire")
 if "df" not in st.session_state:
     st.warning("Commencez d'abord par charger les données", icon="⚠️")
 else:
-    df = st.session_state.df
+    df = pd.concat([st.session_state.df, st.session_state.Y], axis=1)
+    categorial_variables = [st.session_state.Y.name]
+    quantitatives_variables = st.session_state.variable_quant
 
     # st.markdown("<center><h1>Analyse exploratoire</center>",
     #             unsafe_allow_html=True)
@@ -22,12 +24,11 @@ else:
 
     # un container pour les stats
     with st.empty():
-        st.table(statistics_for_numeric_variables(df))
+        st.table(statistics_for_numeric_variables(df[quantitatives_variables]))
     st.markdown("<br>", unsafe_allow_html=True)
 
     st.markdown("<center><h3>Histogramme</center>",
                 unsafe_allow_html=True)
-    quantitatives_variables = st.session_state.variable_quant
     column1 = st.selectbox("Choisir une variable quantitative",
                         quantitatives_variables, key="histogramme")
     # appeler la fonction qui affiche l'histogramme avec la variable choisie
@@ -45,7 +46,7 @@ else:
 
     
     if st.session_state.variable_categ:
-        categorial_variables = st.session_state.variable_categ
+        categorial_variables += st.session_state.variable_categ
         st.markdown("<center><h3>Diagramme circulaire</center>",
                 unsafe_allow_html=True)
         column1 = st.selectbox("Choisir une variable categorielle", categorial_variables, key="camembert")

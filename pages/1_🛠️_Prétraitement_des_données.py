@@ -219,7 +219,7 @@ if file_uploader is not None:
                             elif method == "StandardScaler":
                                 scaler = StandardScaler()
                             df[st.session_state.variable_quant] = pd.DataFrame(scaler.fit_transform(df[st.session_state.variable_quant]), columns=st.session_state.variable_quant)
-                        st.write(df)
+                            st.write(df)
                 
                         ################################################################################################################
                         # Les variables catégorielles
@@ -238,14 +238,7 @@ if file_uploader is not None:
                                 st.session_state.categ_disabled = True
                                 st.experimental_rerun()
                             if st.session_state.categ_disabled:
-                                if method == "Label Encoding":
-                                    dff = df[st.session_state.variable_categ].apply(LabelEncoder().fit_transform)
-                                    dff.columns = dff.columns.map(lambda x: x + '_encoded')
-                                    df = pd.concat([df, dff], axis=1)
-                                else:
-                                    dff = df[st.session_state.variable_categ]
-                                    df = pd.concat([dff, pd.get_dummies(df, columns=st.session_state.variable_categ, drop_first=True, prefix=st.session_state.variable_categ)], axis=1)
-                                st.write(df)
+                                st.session_state.dummification_method = method
                                 suite = True
                         else:
                             suite = True
