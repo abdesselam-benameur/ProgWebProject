@@ -272,10 +272,9 @@ def graphic_representation(categorical_variable_1, categorical_variable_2):
 
     # Création du diagramme en barres empilées
     contingency_table.plot(kind='bar', stacked=True)
-    plt.title('Tableau de contingence entre {} et {}'.format(
-        categorical_variable_1.name, categorical_variable_2.name))
+    plt.title('Diagramme en bâtons')
     plt.xlabel(categorical_variable_1.name)
-    plt.ylabel('Nombre d\'observations')
+    plt.ylabel("Nombre d'observations")
     return plt.gcf(), contingency_table
 
 # analyse bidimensionnelle sur les variables qualitatives
