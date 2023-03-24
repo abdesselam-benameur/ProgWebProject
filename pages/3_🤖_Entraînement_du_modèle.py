@@ -1,6 +1,7 @@
 from entrainement import *
 import streamlit as st
 from sklearn.preprocessing import LabelEncoder
+from functions import apply_imbalanced_data_method
 
 st.title("Entraînement du modèle")
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -52,8 +53,9 @@ else:
         # create a button to train the model
         with st.spinner('Entraînement en cours...'):
             X_train,X_test,y_train,y_test = load_dataset(df, st.session_state.Y, test_size/100)
+            if "imbalanced_data_treatment_method" in st.session_state:
+                X_train, y_train = apply_imbalanced_data_method(X_train, y_train, st.session_state.imbalanced_data_treatment_method)
             model = train_and_fine_tune(X_train, y_train, hyper_params_method, selected_algorithm)
-        # st.write(model)
         st.success("L'entraînement est terminé avec succès", icon="✅")
 
         st.write("## Evaluation du modèle")

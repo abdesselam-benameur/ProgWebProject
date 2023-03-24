@@ -49,7 +49,7 @@ else:
         categorial_variables += st.session_state.variable_categ
         st.markdown("<center><h3>Diagramme circulaire</center>",
                 unsafe_allow_html=True)
-        column1 = st.selectbox("Choisir une variable categorielle", categorial_variables, key="camembert")
+        column1 = st.selectbox("Choisir une variable catégorielle", categorial_variables, key="camembert")
         # appeler la fonction qui affiche le camembert avec la variable choisie
         pie_plot_of_categories(df[column1])
         st.markdown("<br>", unsafe_allow_html=True)
@@ -101,7 +101,7 @@ else:
             column11 = st.selectbox("Choisir une variable quantitative",
                                     quantitatives_variables, key="boxplot1")
         with col2:
-            column12 = st.selectbox("Choisir une variable categorielle",
+            column12 = st.selectbox("Choisir une variable catégorielle",
                                     categorial_variables, key="boxplot2")
         st.table(mean_and_std_by_categorical_variable(
             column12, df[[column11, column12]]).T)
@@ -120,22 +120,11 @@ else:
                     unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
-            column11 = st.selectbox("Choisir une variable categorielle",
+            column11 = st.selectbox("Choisir une variable catégorielle",
                                     categorial_variables, key="diag1")
         with col2:
-            column12 = st.selectbox("Choisir une variable categorielle",
+            column12 = st.selectbox("Choisir une variable catégorielle",
                                     categorial_variables, key="diag2")
         fig, contingency_table = graphic_representation(df[column11], df[column12])
         st.table(contingency_table)
         st.pyplot(fig)
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        # st.markdown("<center><h3>Tableau contingence</center>",
-        #             unsafe_allow_html=True)
-        # col1, col2 = st.columns(2)
-        # with col1:
-        #     column21 = st.selectbox("Choisir une variable categorielle",
-        #                             categorial_variables, key="cont1")
-        # with col2:
-        #     column22 = st.selectbox("Choisir une variable categorielle",
-        #                             categorial_variables, key="cont2")

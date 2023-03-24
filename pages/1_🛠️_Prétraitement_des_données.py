@@ -68,7 +68,7 @@ if file_uploader is not None:
                 with col2:
                     col2.write(st.session_state.df_types.at[colName, "Type de la colonne"])
 
-            if st.button("Valider les types des colonnes", use_container_width=True):
+            if st.button("Valider les types des variables", use_container_width=True):
                 st.session_state.switch_buttons_disabled = True
                 st.experimental_rerun()
                 # todo: make the necessary changes of df types
@@ -267,9 +267,7 @@ if file_uploader is not None:
                                 st.experimental_rerun()
                             if st.session_state.target_disabled:
                                 if choice == "Oui":
-                                    df, Y = apply_imbalanced_data_method(df, Y, method)
-                                    st.write("Nouvelle distribution des classes")
-                                    st.bar_chart(Y.value_counts())
+                                    st.session_state.imbalanced_data_treatment_method = method
                                 st.session_state.df = df
                                 st.session_state.Y = Y if variable_type(Y) == "quantitative" else pd.Series(LabelEncoder().fit_transform(Y))
 
