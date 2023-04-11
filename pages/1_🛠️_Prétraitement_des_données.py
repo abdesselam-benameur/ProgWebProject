@@ -32,8 +32,8 @@ if file_uploader is not None:
     if seperator != "":
         # afficher le dataset
         # st.write("Afficher le dataset")
-        # df = pd.read_csv(file_uploader, sep=seperator)
-        # df_copy = df.copy()
+        df = pd.read_csv(file_uploader, sep=seperator)
+        df_copy = df.copy()
         # st.write(df)
         st.write(f"Le dataset contient `{df.shape[0]}` lignes et `{df.shape[1]}` colonnes")
 
