@@ -31,10 +31,10 @@ if file_uploader is not None:
     seperator = st.text_input("Séparateur", value=",")
     if seperator != "":
         # afficher le dataset
-        st.write("Afficher le dataset")
-        df = pd.read_csv(file_uploader, sep=seperator)
-        df_copy = df.copy()
-        st.write(df)
+        # st.write("Afficher le dataset")
+        # df = pd.read_csv(file_uploader, sep=seperator)
+        # df_copy = df.copy()
+        # st.write(df)
         st.write(f"Le dataset contient `{df.shape[0]}` lignes et `{df.shape[1]}` colonnes")
 
         st.write("### Choisir la colonne target")
